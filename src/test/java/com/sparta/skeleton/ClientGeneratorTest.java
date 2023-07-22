@@ -12,6 +12,6 @@ public class ClientGeneratorTest {
     @DisplayName("Test Client Generator returns a valid Client object")
     void testClientGeneratorReturnsAValidClientObject() {
         Client client = new Client();
-        Assertions.assertTrue(client.getClass().equals(ClientGenerator.generateClient().getClass()));
+        Assertions.assertEquals(client.getClass(), ClientGenerator.generateClient().getClass());
     }
 }
