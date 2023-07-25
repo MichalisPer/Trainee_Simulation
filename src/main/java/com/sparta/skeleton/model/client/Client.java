@@ -1,10 +1,7 @@
-package com.sparta.skeleton.model;
+package com.sparta.skeleton.model.client;
 
-import com.sparta.skeleton.model.trainees.Trainee;
 import com.sparta.skeleton.utilities.NonGaussianRandomBias;
 import com.sparta.skeleton.utilities.TraineeHelper;
-
-import java.util.ArrayList;
 
 public class Client {
 
@@ -12,7 +9,7 @@ public class Client {
 
     private final int clientID;
     private int countMonths = 0;
-    private final ArrayList<Trainee> graduatesOnSite = new ArrayList<>();
+    private int traineesOnSite = 0;
 
     private final int traineeRequirement;
 
@@ -30,8 +27,8 @@ public class Client {
         increment++;
     }
 
-    public ArrayList<Trainee> getTraineeList() {
-        return graduatesOnSite;
+    public int getTraineesOnSite() {
+        return traineesOnSite;
     }
 
     public int getCountMonths() {
@@ -39,12 +36,16 @@ public class Client {
     }
 
     public boolean isHappy() {
-        if ((countMonths % 12 != 0 || graduatesOnSite.size() >= currentTraineeRequirement) && isHappy) {
+        if ((countMonths % 12 != 0 || traineesOnSite >= currentTraineeRequirement) && isHappy) {
             return true;
         } else {
             isHappy = false;
             return false;
         }
+    }
+
+    public boolean isClientFull() {
+        return traineesOnSite == currentTraineeRequirement;
     }
 
     public void setCurrentTraineeRequirement() {
@@ -55,25 +56,25 @@ public class Client {
         countMonths++;
     }
 
-    public int getNumberOfGraduates() {
-        return graduatesOnSite.size();
-    }
-
     public int getTraineeRequirement() {
-        return currentTraineeRequirement;
+        return traineeRequirement;
     }
 
     public String[] getRequiredTraineeType() {
         return requiredTraineeType;
     }
 
-    public boolean addTrainee(Trainee trainee) {
-        if(graduatesOnSite.size() < currentTraineeRequirement) {
-            graduatesOnSite.add(trainee);
+    public boolean addTrainee() {
+        if(traineesOnSite < currentTraineeRequirement) {
+            traineesOnSite++;
             return true;
         } else {
             return false;
         }
+    }
+
+    public int getCurrentTraineeRequirement() {
+        return currentTraineeRequirement;
     }
 
     public int getClientID() {

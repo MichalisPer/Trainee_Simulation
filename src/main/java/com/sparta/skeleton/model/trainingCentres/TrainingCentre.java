@@ -8,8 +8,10 @@ public abstract class TrainingCentre {
     protected final int trainingCentreID;
     protected static int increment = 1;
     protected int countMonths = 0;
-    protected ArrayList<Trainee> traineesList = new ArrayList<>();
+    protected int numOfTrainees = 0;
     protected String[] courseTypes;
+
+    private boolean isClosed = false;
 
     public TrainingCentre() {
         trainingCentreID = increment;
@@ -17,19 +19,19 @@ public abstract class TrainingCentre {
     }
 
     public int getCurrentCapacity() {
-        return traineesList.size();
+        return numOfTrainees;
     }
     public int getRemainingCapacity() {
-        return getMaxCapacity()- traineesList.size();
+        return getMaxCapacity()- numOfTrainees;
     }
 
     public boolean trainingCentreIsFull() {
-        return getMaxCapacity() == traineesList.size();
+        return getMaxCapacity() == numOfTrainees;
     }
 
-    public void addTrainee(Trainee trainee) {
-        if(traineesList.size() < getMaxCapacity()) {
-            traineesList.add(trainee);
+    public void addTrainee() {
+        if(numOfTrainees < getMaxCapacity()) {
+            numOfTrainees++;
         }
     }
 
@@ -37,8 +39,16 @@ public abstract class TrainingCentre {
         return trainingCentreID;
     }
 
-    public ArrayList<Trainee> getTraineesList() {
-        return traineesList;
+    public int getNumOfTrainees() {
+        return numOfTrainees;
+    }
+
+    public boolean isClosed() {
+        return isClosed;
+    }
+
+    public void closeCentre(){
+        isClosed = true;
     }
 
     public void incrementMonth() {

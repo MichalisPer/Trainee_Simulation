@@ -1,7 +1,8 @@
 package com.sparta.skeleton.controller.trainingcentre;
 
-import com.sparta.skeleton.controller.trainee.TraineeAllocationManager;
+import com.sparta.skeleton.controller.trainee.TraineeManager;
 import com.sparta.skeleton.model.trainees.Trainee;
+import com.sparta.skeleton.model.trainees.TraineeStage;
 import com.sparta.skeleton.model.trainingCentres.TrainingCentre;
 
 import java.util.*;
@@ -9,22 +10,21 @@ import java.util.*;
 public class TrainingCentreManager {
 
 
-    public static void close(ArrayList<TrainingCentre> centres, Deque<Trainee> waitList, ArrayList<TrainingCentre> closedCentres) {
-        ArrayList<TrainingCentre> centresToRemove = new ArrayList<>();
-        for (TrainingCentre centre : centres) { // check each centre that needs to be closed
-            if (centre.getCurrentCapacity() < 25 && centre.isOverMaxMonths()) {
-                closeCentre(centre, waitList, closedCentres);
-                centresToRemove.add(centre);
+    public static void close(ArrayList<TrainingCentre> centres, Deque<Trainee> trainees) {
+        for (TrainingCentre centre : centres.stream().filter(trainingCentre -> !trainingCentre.isClosed()).toList()) { // check each centre that needs to be closed
+            if (centre.getCurrentCapacity() < 25 && centre.isOverMaxMonths() && !centre.isClosed()) {
+                TraineeManager.alterAndBringToFront(trainees, trainee -> {
+                    if (trainee.getTrainingCentreID() == centre.getTrainingCentreID()) {
+                        trainee.setTrainingCentreID(-1);
+                        trainee.setCurrentStage(TraineeStage.WAITING);
+                        return true;
+                    }
+                    return false;
+                });
+                centre.closeCentre();
             }
         }
-        centres.removeAll(centresToRemove);
     }
-
-    public static void closeCentre(TrainingCentre centre, Deque<Trainee> waitList, ArrayList<TrainingCentre> closedCentres) {
-        TraineeAllocationManager.sendToFrontOfWaitList(centre, waitList);
-        closedCentres.add(centre);
-    }
-
 
     public static int getTraineeCount(ArrayList<TrainingCentre> trainingCentre) {
         return trainingCentre.size();
@@ -32,20 +32,18 @@ public class TrainingCentreManager {
 
 
     public static int populateTrainingCentre(Deque<Trainee> traineeQueue, TrainingCentre trainingCentre, int uptake) {
-        ArrayList<Trainee> notMatchingCourseType = new ArrayList<>();
-        while (uptake > 0 && !trainingCentre.trainingCentreIsFull() && !traineeQueue.isEmpty()) {
-            if (Arrays.stream(trainingCentre.getCourseTypes()).anyMatch(s -> {
-                assert traineeQueue.peek() != null;
-                return s.equals(traineeQueue.peek().getCourseType());
-            })) {
-                trainingCentre.addTrainee(traineeQueue.remove());
+        for (Trainee trainee : traineeQueue.stream()
+                .filter(trainee -> trainee.getCurrentStage() == TraineeStage.WAITING
+                        && Arrays.stream(trainingCentre.getCourseTypes()).anyMatch(s -> s.equals(trainee.getCourseType()))).toList()) {
+            if (uptake > 0 && !trainingCentre.trainingCentreIsFull()) {
+                System.out.println(trainee.getCourseType() + ":::" + Arrays.stream(trainingCentre.getCourseTypes()).toList());
+                trainee.setTrainingCentreID(trainingCentre.getTrainingCentreID());
+                trainee.setCurrentStage(TraineeStage.IN_TRAINING);
+                trainingCentre.addTrainee();
                 uptake--;
             } else {
-                notMatchingCourseType.add(traineeQueue.remove());
+                break;
             }
-        }
-        for (Trainee trainee : notMatchingCourseType) {
-            traineeQueue.addFirst(trainee);
         }
         return uptake;
     }
@@ -57,7 +55,8 @@ public class TrainingCentreManager {
     }
 
     public static void incrementMonthCounter(ArrayList<TrainingCentre> trainingCentres) {
-        for (TrainingCentre centre : trainingCentres) {
+        for (TrainingCentre centre : trainingCentres.stream().
+                filter(trainingCentre -> !trainingCentre.isClosed()).toList()) {
             centre.incrementMonth();
         }
     }

@@ -1,5 +1,8 @@
 package com.sparta.skeleton.model.simulation;
 
+import com.sparta.skeleton.model.simulation.SimulationSystem;
+import com.sparta.skeleton.model.trainees.TraineeStage;
+import com.sparta.skeleton.model.trainingCentres.TrainingCentre;
 import com.sparta.skeleton.utilities.TraineeHelper;
 import com.sparta.skeleton.utilities.TrainingCentreHelper;
 import org.json.JSONArray;
@@ -33,37 +36,37 @@ public class JSONFileWriter {
         currentPeriod.put("full_centres", fullCentres);
 
         JSONObject closedCentres = new JSONObject();
-        closedCentres.put("total", simulationSystem.closedTrainingCentres.size());
+        closedCentres.put("total", simulationSystem.trainingCentres.stream().filter(TrainingCentre::isClosed).count());
         for (String trainingCentreType : TrainingCentreHelper.TRAINING_CENTRE_TYPES) {
-            closedCentres.put(trainingCentreType, simulationSystem.getNumberOfTrainingCentresByType(simulationSystem.closedTrainingCentres, trainingCentreType));
+            closedCentres.put(trainingCentreType, simulationSystem.getNumberOfTrainingCentresByType(simulationSystem.trainingCentres.stream().filter(TrainingCentre::isClosed).toList(), trainingCentreType));
         }
         currentPeriod.put("closed_centres", closedCentres);
 
         JSONObject traineesOnTrainingCentres = new JSONObject();
-        traineesOnTrainingCentres.put("total", simulationSystem.getNumberOfTraineesInTraining());
+        traineesOnTrainingCentres.put("total", simulationSystem.getNumberOfTrainees(TraineeStage.IN_TRAINING));
         for (String traineeCourse : TraineeHelper.TRAINEE_TYPES) {
-            traineesOnTrainingCentres.put(traineeCourse, simulationSystem.getNumberOfTraineesInTraining(traineeCourse));
+            traineesOnTrainingCentres.put(traineeCourse, simulationSystem.getNumberOfTrainees(TraineeStage.IN_TRAINING, traineeCourse));
         }
         currentPeriod.put("trainees_training", traineesOnTrainingCentres);
 
         JSONObject traineesOnWaitingList = new JSONObject();
-        traineesOnWaitingList.put("total", simulationSystem.waitingList.size());
+        traineesOnWaitingList.put("total", simulationSystem.getNumberOfTrainees(TraineeStage.WAITING));
         for (String traineeCourse : TraineeHelper.TRAINEE_TYPES) {
-            traineesOnWaitingList.put(traineeCourse, simulationSystem.getNumberOfTraineesInDequeByType(traineeCourse, simulationSystem.waitingList));
+            traineesOnWaitingList.put(traineeCourse, simulationSystem.getNumberOfTrainees(TraineeStage.WAITING, traineeCourse));
         }
         currentPeriod.put("trainees_waiting", traineesOnWaitingList);
 
         JSONObject graduates = new JSONObject();
-        graduates.put("total", simulationSystem.graduatesList.size());
+        graduates.put("total", simulationSystem.getNumberOfTrainees(TraineeStage.ON_BENCH));
         for (String traineeCourse : TraineeHelper.TRAINEE_TYPES) {
-            graduates.put(traineeCourse, simulationSystem.getNumberOfTraineesInDequeByType(traineeCourse, simulationSystem.graduatesList));
+            graduates.put(traineeCourse, simulationSystem.getNumberOfTrainees(TraineeStage.ON_BENCH, traineeCourse));
         }
         currentPeriod.put("graduates", graduates);
 
         JSONObject graduatesWithClients = new JSONObject();
-        graduatesWithClients.put("total", simulationSystem.getNumberOfGraduatesWithClients());
+        graduatesWithClients.put("total", simulationSystem.getNumberOfTrainees(TraineeStage.ON_ASSIGNMENT));
         for (String traineeCourse : TraineeHelper.TRAINEE_TYPES) {
-            graduatesWithClients.put(traineeCourse, simulationSystem.getNumberOfTraineesInClients(traineeCourse));
+            graduatesWithClients.put(traineeCourse, simulationSystem.getNumberOfTrainees(TraineeStage.ON_ASSIGNMENT, traineeCourse));
         }
         currentPeriod.put("graduates_placed", graduatesWithClients);
 

@@ -1,31 +1,26 @@
 package com.sparta.skeleton.controller.client;
 
-import com.sparta.skeleton.model.Client;
+import com.sparta.skeleton.model.client.Client;
 import com.sparta.skeleton.model.trainees.Trainee;
+import com.sparta.skeleton.model.trainees.TraineeStage;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Deque;
+import java.util.Random;
 
 public class ClientManager {
 
-    public static void populateClients(Deque<Trainee> graduates, Client client) {
-        ArrayList<Trainee> notMatchingClientType = new ArrayList<>();
-
-        while (!graduates.isEmpty()) {
-            if (Arrays.stream(client.getRequiredTraineeType()).anyMatch(s -> {
-                assert graduates.peek() != null;
-                return s.equals(graduates.peek().getCourseType());
-            })) {
-                if (!client.addTrainee(graduates.remove())) {
-                    break;
-                }
+    public static void populateClients(Deque<Trainee> trainees, Client client, int traineeUptake) {
+        for (Trainee trainee: trainees.stream().
+                filter(trainee -> trainee.getCurrentStage() == TraineeStage.ON_BENCH).toList()) {
+            if (traineeUptake > 0 && !client.isClientFull()) {
+                trainee.setCurrentStage(TraineeStage.ON_ASSIGNMENT);
+                trainee.setClientID(client.getClientID());
+                client.addTrainee();
+                traineeUptake--;
             } else {
-                notMatchingClientType.add(graduates.remove());
+                break;
             }
-        }
-        for (Trainee trainee : notMatchingClientType) {
-            graduates.addFirst(trainee);
         }
     }
 
@@ -33,5 +28,10 @@ public class ClientManager {
         for (Client client : clients) {
             client.incrementMonth();
         }
+    }
+
+    public static int generateClientUptake(Client client) {
+        Random random = new Random();
+        return random.nextInt(client.getTraineeRequirement());
     }
 }

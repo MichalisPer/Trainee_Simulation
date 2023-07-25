@@ -1,6 +1,6 @@
 package com.sparta.skeleton.controller.client;
 
-import com.sparta.skeleton.model.Client;
+import com.sparta.skeleton.model.client.Client;
 
 public class ClientGenerator {
 
