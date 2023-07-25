@@ -2,90 +2,58 @@ package com.sparta.skeleton.controller.trainee;
 
 import com.sparta.skeleton.controller.client.ClientManager;
 import com.sparta.skeleton.controller.trainingcentre.TrainingCentreManager;
-import com.sparta.skeleton.model.Client;
+import com.sparta.skeleton.model.client.Client;
 import com.sparta.skeleton.model.trainees.Trainee;
+import com.sparta.skeleton.model.trainees.TraineeStage;
 import com.sparta.skeleton.model.trainingCentres.TrainingCentre;
-import com.sparta.skeleton.utilities.logging.LoggerSingleton;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Deque;
-import java.util.Queue;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import java.util.*;
 
 public class TraineeAllocationManager {
 
-    static Logger logger = LoggerSingleton.getSingleton().getLogger();
-
-    public static void allocate(Queue<Trainee> wildList, Deque<Trainee> waitList, ArrayList<TrainingCentre> centres) {
-        logger.log(Level.INFO, "Waiting list size at the beginning of allocation: " + waitList.size());
-        logger.log(Level.INFO, "Currently trainees in wild: " + wildList.size());
-        mergeQueues(wildList, waitList);
-        if (!waitList.isEmpty()) {
-            allocateToTrainingCentres(waitList, centres);
-        } else {
-            logger.log(Level.FINE, "No trainees to allocate");
+    public static void allocate(Deque<Trainee> trainees, ArrayList<TrainingCentre> centres) {
+        if (trainees.stream().anyMatch(trainee -> trainee.getCurrentStage() == TraineeStage.WAITING)) {
+            allocateToTrainingCentres(trainees, centres);
         }
-        logger.log(Level.INFO, "Waiting list size at the end of allocation: " + waitList.size());
     }
 
-    public static void allocateToTrainingCentres(Deque<Trainee> waitList, ArrayList<TrainingCentre> centres) {
-        int traineeUptake;
+    public static void allocateToTrainingCentres(Deque<Trainee> trainees, ArrayList<TrainingCentre> centres) {
+        int traineeUptake = 0;
         for (TrainingCentre centre : centres) { // fill each training centre before going to the next centre
-            if (centre.trainingCentreIsFull()) {
+            if (centre.trainingCentreIsFull() || centre.isClosed()) {
                 continue;
             }
-            traineeUptake = TrainingCentreManager.generateRandomTraineeUptake();
-            logger.log(Level.INFO, "Current Trainee Uptake Before populating: " + traineeUptake);
-            traineeUptake = TrainingCentreManager.populateTrainingCentre(waitList, centre, traineeUptake);
-            if (traineeUptake > 0) {
-                logger.log(Level.FINE, "Log current centre has larger uptake than available trainees");
+            traineeUptake += TrainingCentreManager.generateRandomTraineeUptake();
+            traineeUptake = TrainingCentreManager.populateTrainingCentre(trainees, centre, traineeUptake);
+            if (traineeUptake > 0 && !centre.trainingCentreIsFull()) {
                 break;
             }
         }
     }
 
-    public static void benchTrainees(Deque<Trainee> graduates, ArrayList<TrainingCentre> trainingCentres) {
-        ArrayList<Trainee> traineesToBeRemoved = new ArrayList<>();
-        for (TrainingCentre centre : trainingCentres) {
-            for (Trainee trainee : centre.getTraineesList()) {
-                if (trainee.getMonthsTrained() >= 12) {
-                    graduates.add(trainee);
-                    traineesToBeRemoved.add(trainee);
-                }
+    public static void benchTrainees(Deque<Trainee> trainees, ArrayList<TrainingCentre> trainingCentres) {
+        for (Trainee trainee : trainees.stream().
+                filter(trainee -> trainee.getCurrentStage() == TraineeStage.IN_TRAINING).toList()) {
+            if (trainee.getMonthsTrained() >= 12) {
+                trainee.setCurrentStage(TraineeStage.ON_BENCH);
+                trainingCentres.stream().filter(trainingCentre ->
+                        trainingCentre.getTrainingCentreID() == trainee.getTrainingCentreID())
+                        .findFirst()
+                        .ifPresent(TrainingCentre::removeTrainee);
             }
-            centre.getTraineesList().removeAll(traineesToBeRemoved);
         }
     }
 
     public static void allocateToClients(Deque<Trainee> graduates, ArrayList<Client> clients) {
         for (Client client : clients) { // fill each training centre before going to the next centre
-            logger.log(Level.FINE, client.getClientID() + "::" + Arrays.toString(client.getRequiredTraineeType()) + "::" + client.getTraineeRequirement() + "::" + client.getCountMonths() + "::" + client.isHappy());
             if (!client.isHappy()) {
                 continue;
             }
-            logger.log(Level.FINE, String.valueOf(client.getClientID()));
             if (client.getCountMonths() % 12 == 0) {
                 client.setCurrentTraineeRequirement();
             }
-            logger.log(Level.FINE, "Current client graduate list before populating: " + "id: " + client.getClientID() + " list count: " + client.getTraineeList().size());
             ClientManager.populateClients(graduates, client);
-            logger.log(Level.FINE, "Current client graduate list after populating: " + "id: " + client.getClientID() + " list count: " + client.getTraineeList().size());
         }
     }
-
-    public static void sendToFrontOfWaitList(TrainingCentre trainingCentre, Deque<Trainee> waitList) {
-        ArrayList<Trainee> trainees = trainingCentre.getTraineesList();
-        for (Trainee trainee : trainees) {
-            waitList.addFirst(trainee);
-        }
-    }
-
-    public static void mergeQueues(Queue<Trainee> wildList, Queue<Trainee> waitList) {
-        waitList.addAll(wildList);
-        wildList.clear();
-    }
-
-
 }

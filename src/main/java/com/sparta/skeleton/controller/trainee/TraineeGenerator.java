@@ -3,32 +3,28 @@ package com.sparta.skeleton.controller.trainee;
 
 import com.sparta.skeleton.model.trainees.Trainee;
 
+import java.util.Deque;
 import java.util.LinkedList;
 import java.util.Queue;
 import java.util.Random;
 
 public class TraineeGenerator {
 
-    public static int traineeMax = 100;
-    public static int traineeMin = 0;
+    private static int traineeMax;
+    private static int traineeMin;
 
-    static public Queue<Trainee> getTrainees() {
-        long seed = System.currentTimeMillis();
-        return generateTrainees(getRandomTraineesCount(seed));
-    }
-
-    static public int getRandomTraineesCount(long seed) {
-        Random randomizer = new Random(seed);
-        return randomizer.nextInt(traineeMax - traineeMin + 1) + traineeMin;
-    }
-
-    static public Queue<Trainee> generateTrainees(int count) {
-        Queue<Trainee> trainees = new LinkedList<>();
-
-        for (int i = 0; i < count; i++) {
+    public static void generateTrainees(Deque<Trainee> trainees) {
+        Random random = new Random();
+        for (int i = 0; i < random.nextInt(traineeMin, traineeMax + 1); i++) {
             trainees.add(new Trainee());
         }
+    }
 
-        return trainees;
+    public static void setTraineeMax(int traineeMax) {
+        TraineeGenerator.traineeMax = traineeMax;
+    }
+
+    public static void setTraineeMin(int traineeMin) {
+        TraineeGenerator.traineeMin = traineeMin;
     }
 }

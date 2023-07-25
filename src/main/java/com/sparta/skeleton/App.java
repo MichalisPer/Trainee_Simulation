@@ -1,9 +1,10 @@
 package com.sparta.skeleton;
 
 /**
- * Hello world!
+ * Main class to start the application.
  */
 public class App {
+
     public static void main(String[] args) {
         SimulationLoader simLoader = new SimulationLoader();
         simLoader.start();
