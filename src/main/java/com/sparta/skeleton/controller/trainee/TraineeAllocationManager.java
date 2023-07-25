@@ -1,6 +1,7 @@
 package com.sparta.skeleton.controller.trainee;
 
 import com.sparta.skeleton.controller.client.ClientManager;
+import com.sparta.skeleton.controller.trainingcentre.TrainingCentreGenerator;
 import com.sparta.skeleton.controller.trainingcentre.TrainingCentreManager;
 import com.sparta.skeleton.model.client.Client;
 import com.sparta.skeleton.model.trainees.Trainee;
@@ -24,7 +25,7 @@ public class TraineeAllocationManager {
             if (centre.trainingCentreIsFull() || centre.isClosed()) {
                 continue;
             }
-            traineeUptake += TrainingCentreManager.generateRandomTraineeUptake();
+            traineeUptake += TrainingCentreGenerator.generateRandomTraineeUptake();
             traineeUptake = TrainingCentreManager.populateTrainingCentre(trainees, centre, traineeUptake);
             if (traineeUptake > 0 && !centre.trainingCentreIsFull()) {
                 break;

@@ -8,7 +8,6 @@ import com.sparta.skeleton.model.trainingCentres.TrainingCentre;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Deque;
-import java.util.Random;
 
 public class TrainingCentreManager {
 
@@ -30,11 +29,6 @@ public class TrainingCentreManager {
         }
     }
 
-    public static int getTraineeCount(ArrayList<TrainingCentre> trainingCentre) {
-        return trainingCentre.size();
-    }
-
-
     public static int populateTrainingCentre(Deque<Trainee> traineeQueue, TrainingCentre trainingCentre, int uptake) {
         for (Trainee trainee : traineeQueue.stream()
                 .filter(trainee -> trainee.getCurrentStage() == TraineeStage.WAITING
@@ -49,12 +43,6 @@ public class TrainingCentreManager {
             }
         }
         return uptake;
-    }
-
-    public static int generateRandomTraineeUptake() {
-        Random random = new Random();
-
-        return random.nextInt(51);
     }
 
     public static void incrementMonthCounter(ArrayList<TrainingCentre> trainingCentres) {

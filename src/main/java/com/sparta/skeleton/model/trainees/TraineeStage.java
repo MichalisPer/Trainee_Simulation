@@ -1,10 +1,10 @@
 package com.sparta.skeleton.model.trainees;
 
 public enum TraineeStage {
-    WAITING("Waiting"),
-    IN_TRAINING("In training"),
-    ON_BENCH("On bench"),
-    ON_ASSIGNMENT("On assignment");
+    WAITING("waiting"),
+    IN_TRAINING("in training"),
+    ON_BENCH("on bench"),
+    ON_ASSIGNMENT("on assignment");
 
     private final String description;
 

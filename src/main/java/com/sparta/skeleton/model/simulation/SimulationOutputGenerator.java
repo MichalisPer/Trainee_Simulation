@@ -8,7 +8,7 @@ import com.sparta.skeleton.utilities.TrainingCentreHelper;
 
 import java.util.List;
 
-public class SimulationOutput {
+public class SimulationOutputGenerator {
 
     public static String getSimulationOutput(SimulationSystem simulationSystem) {
         StringBuilder sb = new StringBuilder();
@@ -23,24 +23,11 @@ public class SimulationOutput {
         sb.append("\nNumber of closed centres: ").append(simulationSystem.trainingCentres.stream().filter(TrainingCentre::isClosed).count());
         formatOutputByTrainingCentreType(simulationSystem, simulationSystem.trainingCentres.stream().filter(TrainingCentre::isClosed).toList(), sb);
 
-        sb.append("\nNumber of trainees currently on training: ").append(simulationSystem.getNumberOfTrainees(TraineeStage.IN_TRAINING));
-        for (String traineeCourse : TraineeHelper.TRAINEE_TYPES) {
-            sb.append("\n  - ").append(traineeCourse).append(": ").append(simulationSystem.getNumberOfTrainees(TraineeStage.IN_TRAINING, traineeCourse));
-        }
-
-        sb.append("\nNumber of trainees currently on waiting list: ").append(simulationSystem.getNumberOfTrainees(TraineeStage.WAITING));
-        for (String traineeCourse : TraineeHelper.TRAINEE_TYPES) {
-            sb.append("\n  - ").append(traineeCourse).append(": ").append(simulationSystem.getNumberOfTrainees(TraineeStage.WAITING, traineeCourse));
-        }
-
-        sb.append("\nNumber of trainees currently on graduates list: ").append(simulationSystem.getNumberOfTrainees(TraineeStage.ON_BENCH));
-        for (String traineeCourse : TraineeHelper.TRAINEE_TYPES) {
-            sb.append("\n  - ").append(traineeCourse).append(": ").append(simulationSystem.getNumberOfTrainees(TraineeStage.ON_BENCH, traineeCourse));
-        }
-
-        sb.append("\nNumber of graduates currently with clients: ").append(simulationSystem.getNumberOfTrainees(TraineeStage.ON_ASSIGNMENT));
-        for (String traineeCourse : TraineeHelper.TRAINEE_TYPES) {
-            sb.append("\n  - ").append(traineeCourse).append(": ").append(simulationSystem.getNumberOfTrainees(TraineeStage.ON_ASSIGNMENT, traineeCourse));
+        for (TraineeStage stage : TraineeStage.values()) {
+            sb.append("\nNumber of trainees currently ").append(stage.getDescription()).append(": ").append(simulationSystem.getNumberOfTrainees(stage));
+            for (String traineeCourse : TraineeHelper.TRAINEE_TYPES) {
+                sb.append("\n  - ").append(traineeCourse).append(": ").append(simulationSystem.getNumberOfTrainees(stage, traineeCourse));
+            }
         }
 
         sb.append("\nNumber of happy clients: ").append(simulationSystem.getListOfHappyClients().size());

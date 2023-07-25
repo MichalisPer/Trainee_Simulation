@@ -10,12 +10,14 @@ import java.util.Random;
 
 public class TrainingCentreGenerator {
     public static final int BOOTCAMP_MAX = 2;
+
+    public static int maxTraineeUptake;
     public static void generateTrainingCentre(ArrayList<TrainingCentre> trainingCentres) throws RuntimeException {
         Random rand = new Random();
         int nextCenter;
 
         if (trainingCentres.stream().filter(trainingCentre ->
-                trainingCentre.getType().equals("Bootcamp") && !trainingCentre.isClosed()).count() >= 2) {
+                trainingCentre.getType().equals("Bootcamp") && !trainingCentre.isClosed()).count() >= BOOTCAMP_MAX) {
             nextCenter = rand.nextInt(2);
         } else {
             nextCenter = rand.nextInt(3);
@@ -31,5 +33,13 @@ public class TrainingCentreGenerator {
             case 2 -> trainingCentres.add(new Bootcamp());
             default -> throw new RuntimeException("Invalid case");
         }
+    }
+
+    public static void setMaxTraineeUptake(int maxTraineeUptake) {
+        TrainingCentreGenerator.maxTraineeUptake = maxTraineeUptake;
+    }
+
+    public static int generateRandomTraineeUptake() {
+        return new Random().nextInt(maxTraineeUptake + 1);
     }
 }

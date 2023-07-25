@@ -41,33 +41,14 @@ public class JSONFileWriter {
         }
         currentPeriod.put("closed_centres", closedCentres);
 
-        JSONObject traineesOnTrainingCentres = new JSONObject();
-        traineesOnTrainingCentres.put("total", simulationSystem.getNumberOfTrainees(TraineeStage.IN_TRAINING));
-        for (String traineeCourse : TraineeHelper.TRAINEE_TYPES) {
-            traineesOnTrainingCentres.put(traineeCourse, simulationSystem.getNumberOfTrainees(TraineeStage.IN_TRAINING, traineeCourse));
+        for(TraineeStage stage: TraineeStage.values()) {
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("total", simulationSystem.getNumberOfTrainees(stage));
+            for (String traineeCourse : TraineeHelper.TRAINEE_TYPES) {
+                jsonObject.put(traineeCourse, simulationSystem.getNumberOfTrainees(stage, traineeCourse));
+            }
+            currentPeriod.put(stage.getDescription(), jsonObject);
         }
-        currentPeriod.put("trainees_training", traineesOnTrainingCentres);
-
-        JSONObject traineesOnWaitingList = new JSONObject();
-        traineesOnWaitingList.put("total", simulationSystem.getNumberOfTrainees(TraineeStage.WAITING));
-        for (String traineeCourse : TraineeHelper.TRAINEE_TYPES) {
-            traineesOnWaitingList.put(traineeCourse, simulationSystem.getNumberOfTrainees(TraineeStage.WAITING, traineeCourse));
-        }
-        currentPeriod.put("trainees_waiting", traineesOnWaitingList);
-
-        JSONObject graduates = new JSONObject();
-        graduates.put("total", simulationSystem.getNumberOfTrainees(TraineeStage.ON_BENCH));
-        for (String traineeCourse : TraineeHelper.TRAINEE_TYPES) {
-            graduates.put(traineeCourse, simulationSystem.getNumberOfTrainees(TraineeStage.ON_BENCH, traineeCourse));
-        }
-        currentPeriod.put("graduates", graduates);
-
-        JSONObject graduatesWithClients = new JSONObject();
-        graduatesWithClients.put("total", simulationSystem.getNumberOfTrainees(TraineeStage.ON_ASSIGNMENT));
-        for (String traineeCourse : TraineeHelper.TRAINEE_TYPES) {
-            graduatesWithClients.put(traineeCourse, simulationSystem.getNumberOfTrainees(TraineeStage.ON_ASSIGNMENT, traineeCourse));
-        }
-        currentPeriod.put("graduates_placed", graduatesWithClients);
 
         JSONObject happyClients = new JSONObject();
         happyClients.put("total", simulationSystem.getListOfHappyClients().size());

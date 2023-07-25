@@ -108,7 +108,7 @@ public class SimulationSystem {
 
     @Override
     public String toString() {
-        return SimulationOutput.getSimulationOutput(this);
+        return SimulationOutputGenerator.getSimulationOutput(this);
     }
 
 }
