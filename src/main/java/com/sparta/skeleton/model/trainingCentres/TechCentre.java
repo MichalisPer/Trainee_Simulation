@@ -8,7 +8,7 @@ public class TechCentre extends TrainingCentre {
     //Course type for centre is chosen randomly when opened
 
     public TechCentre() {
-        super();
+        super("TechCentre");
         setCourseType(TraineeHelper.getRandomTraineeTypes(1));
     }
 

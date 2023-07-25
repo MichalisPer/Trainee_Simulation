@@ -15,7 +15,7 @@ public class TrainingCentreGenerator {
         int nextCenter;
 
         if (trainingCentres.stream().filter(trainingCentre ->
-                trainingCentre.getClass().getSimpleName().equals("Bootcamp")).count() >= BOOTCAMP_MAX) {
+                trainingCentre.getType().equals("Bootcamp") && !trainingCentre.isClosed()).count() >= 2) {
             nextCenter = rand.nextInt(2);
         } else {
             nextCenter = rand.nextInt(3);

@@ -13,7 +13,10 @@ public abstract class TrainingCentre {
 
     private boolean isClosed = false;
 
-    public TrainingCentre() {
+    private final String type;
+
+    public TrainingCentre(String type) {
+        this.type = type;
         trainingCentreID = increment;
         increment++;
     }
@@ -33,6 +36,16 @@ public abstract class TrainingCentre {
         if(numOfTrainees < getMaxCapacity()) {
             numOfTrainees++;
         }
+    }
+
+    public void removeTrainee() {
+        if (numOfTrainees > 0) {
+            numOfTrainees--;
+        }
+    }
+
+    public String getType() {
+        return type;
     }
 
     public int getTrainingCentreID() {

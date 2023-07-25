@@ -7,7 +7,7 @@ public class TrainingHub extends TrainingCentre {
     //3 can be opened at a time every 2 months
 
     public TrainingHub() {
-        super();
+        super("TrainingHub");
         setCourseType(TraineeHelper.TRAINEE_TYPES);
     }
 

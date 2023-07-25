@@ -27,5 +27,6 @@ public class TraineeManager {
         }
         trainees.clear();
         trainees.addAll(tempTrainees);
+
     }
 }

@@ -21,7 +21,7 @@ public class TraineeAllocationManager {
     public static void allocateToTrainingCentres(Deque<Trainee> trainees, ArrayList<TrainingCentre> centres) {
         int traineeUptake = 0;
         for (TrainingCentre centre : centres) { // fill each training centre before going to the next centre
-            if (centre.trainingCentreIsFull()) {
+            if (centre.trainingCentreIsFull() || centre.isClosed()) {
                 continue;
             }
             traineeUptake += TrainingCentreManager.generateRandomTraineeUptake();
@@ -32,11 +32,15 @@ public class TraineeAllocationManager {
         }
     }
 
-    public static void benchTrainees(Deque<Trainee> trainees) {
+    public static void benchTrainees(Deque<Trainee> trainees, ArrayList<TrainingCentre> trainingCentres) {
         for (Trainee trainee : trainees.stream().
                 filter(trainee -> trainee.getCurrentStage() == TraineeStage.IN_TRAINING).toList()) {
             if (trainee.getMonthsTrained() >= 12) {
                 trainee.setCurrentStage(TraineeStage.ON_BENCH);
+                trainingCentres.stream().filter(trainingCentre ->
+                        trainingCentre.getTrainingCentreID() == trainee.getTrainingCentreID())
+                        .findFirst()
+                        .ifPresent(TrainingCentre::removeTrainee);
             }
         }
     }
@@ -49,9 +53,7 @@ public class TraineeAllocationManager {
             if (client.getCountMonths() % 12 == 0) {
                 client.setCurrentTraineeRequirement();
             }
-            int traineeUptake = ClientManager.generateClientUptake(client);
-
-            ClientManager.populateClients(graduates, client, traineeUptake);
+            ClientManager.populateClients(graduates, client);
         }
     }
 }

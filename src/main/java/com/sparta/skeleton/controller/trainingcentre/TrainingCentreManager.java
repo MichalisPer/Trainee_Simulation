@@ -14,7 +14,8 @@ public class TrainingCentreManager {
         for (TrainingCentre centre : centres.stream().filter(trainingCentre -> !trainingCentre.isClosed()).toList()) { // check each centre that needs to be closed
             if (centre.getCurrentCapacity() < 25 && centre.isOverMaxMonths() && !centre.isClosed()) {
                 TraineeManager.alterAndBringToFront(trainees, trainee -> {
-                    if (trainee.getTrainingCentreID() == centre.getTrainingCentreID()) {
+                    if (trainee.getTrainingCentreID() == centre.getTrainingCentreID()
+                            && trainee.getCurrentStage() == TraineeStage.IN_TRAINING) {
                         trainee.setTrainingCentreID(-1);
                         trainee.setCurrentStage(TraineeStage.WAITING);
                         return true;
@@ -36,7 +37,6 @@ public class TrainingCentreManager {
                 .filter(trainee -> trainee.getCurrentStage() == TraineeStage.WAITING
                         && Arrays.stream(trainingCentre.getCourseTypes()).anyMatch(s -> s.equals(trainee.getCourseType()))).toList()) {
             if (uptake > 0 && !trainingCentre.trainingCentreIsFull()) {
-                System.out.println(trainee.getCourseType() + ":::" + Arrays.stream(trainingCentre.getCourseTypes()).toList());
                 trainee.setTrainingCentreID(trainingCentre.getTrainingCentreID());
                 trainee.setCurrentStage(TraineeStage.IN_TRAINING);
                 trainingCentre.addTrainee();

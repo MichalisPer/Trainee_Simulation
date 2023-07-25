@@ -43,7 +43,7 @@ public class SimulationSystem {
             TraineeAllocationManager.allocate(trainees, trainingCentres);
             incrementMonthCounter();
             TrainingCentreManager.close(trainingCentres, trainees);
-            TraineeAllocationManager.benchTrainees(trainees);
+            TraineeAllocationManager.benchTrainees(trainees, trainingCentres);
             TraineeAllocationManager.allocateToClients(trainees, clients);
             exportOutputToJSON(outputFrequency, durationInMonths, currentMonth);
         }
