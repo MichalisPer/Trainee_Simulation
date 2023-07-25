@@ -30,7 +30,7 @@ public class SimulationSystem {
     public void runSimulation(int years, String outputFrequency) {
 
         Configurator.loadConfiguration(this);
-        //JSONFileWriter.openJSONFile();
+        JSONFileWriter.openJSONFile();
         int durationInMonths = years * 12;
         for (int currentMonth = 1; currentMonth <= durationInMonths; currentMonth++) {
             TraineeGenerator.generateTrainees(trainees); // Generate new trainees
@@ -47,7 +47,7 @@ public class SimulationSystem {
             TraineeAllocationManager.allocateToClients(trainees, clients);
             exportOutputToJSON(outputFrequency, durationInMonths, currentMonth);
         }
-        //JSONFileWriter.closeJSONFile();
+        JSONFileWriter.closeJSONFile();
     }
 
     private void exportOutputToJSON(String outputFrequency, int durationInMonths, int i) {

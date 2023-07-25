@@ -7,7 +7,6 @@ import com.sparta.skeleton.model.trainees.TraineeStage;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Deque;
-import java.util.Random;
 
 public class ClientManager {
 

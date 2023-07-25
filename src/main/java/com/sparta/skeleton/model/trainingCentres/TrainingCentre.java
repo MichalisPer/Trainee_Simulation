@@ -1,9 +1,5 @@
 package com.sparta.skeleton.model.trainingCentres;
 
-import com.sparta.skeleton.model.trainees.Trainee;
-
-import java.util.ArrayList;
-
 public abstract class TrainingCentre {
     protected final int trainingCentreID;
     protected static int increment = 1;

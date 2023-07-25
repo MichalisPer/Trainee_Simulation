@@ -4,8 +4,6 @@ package com.sparta.skeleton.controller.trainee;
 import com.sparta.skeleton.model.trainees.Trainee;
 
 import java.util.Deque;
-import java.util.LinkedList;
-import java.util.Queue;
 import java.util.Random;
 
 public class TraineeGenerator {

@@ -1,6 +1,5 @@
 package com.sparta.skeleton.model.simulation;
 
-import com.sparta.skeleton.model.simulation.SimulationSystem;
 import com.sparta.skeleton.model.trainees.TraineeStage;
 import com.sparta.skeleton.model.trainingCentres.TrainingCentre;
 import com.sparta.skeleton.utilities.TraineeHelper;

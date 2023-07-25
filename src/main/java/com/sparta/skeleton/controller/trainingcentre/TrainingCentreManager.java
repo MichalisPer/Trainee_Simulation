@@ -5,7 +5,10 @@ import com.sparta.skeleton.model.trainees.Trainee;
 import com.sparta.skeleton.model.trainees.TraineeStage;
 import com.sparta.skeleton.model.trainingCentres.TrainingCentre;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Deque;
+import java.util.Random;
 
 public class TrainingCentreManager {
 
